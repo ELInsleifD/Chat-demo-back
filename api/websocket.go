@@ -110,19 +110,16 @@ func (ws *WsHandler) eventSort(event string, scoop interface{}, chatid string) {
 
 	hexid, err := primitive.ObjectIDFromHex(chatid)
 	if err != nil {
-		log.Println("failed to hex")
 		return
 	}
 	result := models.Chat{}
 	err = ws.datab.Chats().FindOne(context.TODO(), bson.M{"_id": hexid}).Decode(&result)
 	if err != nil {
-		log.Println("filed to find chat")
 		return
 	}
 
 	b, err := json.Marshal(scoop)
 	if err != nil {
-		log.Println("failed to marshal scoop")
 		return
 	}
 
@@ -145,9 +142,9 @@ func (ws *WsHandler) MessageUpdate(msg message, chatid string) {
 	ws.eventSort("msgupdate", msg, chatid)
 }
 func (ws *WsHandler) ChannelDelete(chatid string, userids []string) {
-	ws.specificChatDelete("chdelete", chatid, userids)
+	ws.chatDelete("chdelete", chatid, userids)
 }
-func (ws *WsHandler) specificChatDelete(event string, id string, userids []string) {
+func (ws *WsHandler) chatDelete(event string, id string, userids []string) {
 	msg := ToSend{
 		event:   event,
 		data:    id,
